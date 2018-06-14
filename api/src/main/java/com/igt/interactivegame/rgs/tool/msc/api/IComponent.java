@@ -6,4 +6,6 @@ public interface IComponent {
     String getName();
 
     Map<String, IComponentAction> getActions();
+
+
 }

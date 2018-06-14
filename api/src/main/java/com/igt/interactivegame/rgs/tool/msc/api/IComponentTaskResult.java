@@ -2,8 +2,15 @@ package com.igt.interactivegame.rgs.tool.msc.api;
 
 public interface IComponentTaskResult {
     enum Status {
-        SUCCESS, FAIL
+        SUCCESS,
+        FAIL
     }
 
     Status getStatus();
+
+    IComponent getComponent();
+
+    long getTimeTake();
+
+    String getMessage();
 }
