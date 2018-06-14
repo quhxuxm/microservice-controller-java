@@ -1,4 +1,7 @@
 package com.igt.interactivegame.rgs.tool.msc.api;
 
-public class IComponentAction {
+public interface IComponentAction {
+    IComponent getOwner();
+
+    IComponentTaskResult exec();
 }
