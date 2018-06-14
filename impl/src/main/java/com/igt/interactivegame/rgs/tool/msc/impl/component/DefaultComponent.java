@@ -6,10 +6,10 @@ import com.igt.interactivegame.rgs.tool.msc.api.IComponentAction;
 import java.util.Map;
 
 public class DefaultComponent implements IComponent {
-    private Map<String, IComponentAction> actions;
+    private Map<IComponentAction.ActionName, IComponentAction> actions;
     private String name;
 
-    public DefaultComponent(String name, Map<String, IComponentAction> actions) {
+    public DefaultComponent(String name, Map<IComponentAction.ActionName, IComponentAction> actions) {
         this.name = name;
         this.actions = actions;
     }
@@ -20,7 +20,7 @@ public class DefaultComponent implements IComponent {
     }
 
     @Override
-    public Map<String, IComponentAction> getActions() {
+    public Map<IComponentAction.ActionName, IComponentAction> getActions() {
         return this.actions;
     }
 }

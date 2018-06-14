@@ -5,7 +5,5 @@ import java.util.Map;
 public interface IComponent {
     String getName();
 
-    Map<String, IComponentAction> getActions();
-
-
+    Map<IComponentAction.ActionName, IComponentAction> getActions();
 }

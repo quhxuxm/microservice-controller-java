@@ -4,7 +4,6 @@ import com.igt.interactivegame.rgs.tool.msc.api.IComponent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,10 +18,5 @@ public class Configure {
     @Bean
     ExecutorService executorService() {
         return Executors.newFixedThreadPool(10);
-    }
-
-    @Bean
-    Map<String, IComponent> components() {
-        return new HashMap<>();
     }
 }

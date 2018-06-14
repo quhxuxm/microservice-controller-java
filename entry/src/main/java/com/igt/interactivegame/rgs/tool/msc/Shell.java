@@ -1,7 +1,8 @@
 package com.igt.interactivegame.rgs.tool.msc;
 
+import com.igt.interactivegame.rgs.tool.msc.api.ComponentTaskResult;
 import com.igt.interactivegame.rgs.tool.msc.api.IComponent;
-import com.igt.interactivegame.rgs.tool.msc.api.IComponentTaskResult;
+import com.igt.interactivegame.rgs.tool.msc.api.IComponentAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,23 +23,18 @@ public class Shell {
         this.engine = engine;
     }
 
-    @ShellMethod(value = "Build components")
-    public Map<String, IComponentTaskResult> build(@ShellOption(defaultValue = ShellOption.NULL) String... componentNames) {
-        return this.execComponentTaskShell("build", componentNames);
+    @ShellMethod("Fetch source code from Perforce.")
+    public Map<String, ComponentTaskResult> p4fetch(@ShellOption(defaultValue = ShellOption.NULL) String... componentNames) {
+        return this.execComponentTaskShell(IComponentAction.ActionName.P4_FETCH, componentNames);
     }
 
-    @ShellMethod(value = "Deploy components")
-    public Map<String, IComponentTaskResult> deploy(@ShellOption(defaultValue = ShellOption.NULL) String... componentNames) {
-        return this.execComponentTaskShell("deploy", componentNames);
+    @ShellMethod("Build the source code of a component")
+    public Map<String, ComponentTaskResult> build(@ShellOption(defaultValue = ShellOption.NULL) String... componentNames) {
+        return this.execComponentTaskShell(IComponentAction.ActionName.BUILD, componentNames);
     }
 
-    @ShellMethod(value = "Config components")
-    public Map<String, IComponentTaskResult> config(@ShellOption(defaultValue = ShellOption.NULL) String... componentNames) {
-        return this.execComponentTaskShell("config", componentNames);
-    }
-
-    private Map<String, IComponentTaskResult> execComponentTaskShell(String actionName, String[] componentNames) {
-        final Map<String, IComponentTaskResult> result = new HashMap<>();
+    private Map<String, ComponentTaskResult> execComponentTaskShell(IComponentAction.ActionName actionName, String[] componentNames) {
+        final Map<String, ComponentTaskResult> result = new HashMap<>();
         if (componentNames == null) {
             logger.info("No component identified, will [{}] all components.", actionName);
             Map<String, IComponent> components = this.engine.getComponents();
@@ -61,10 +57,10 @@ public class Shell {
         return result;
     }
 
-    private void invokeEngine(Map<String, IComponentTaskResult> resultContainer, String actionName, String componentName, IComponent component) {
+    private void invokeEngine(Map<String, ComponentTaskResult> resultContainer, IComponentAction.ActionName actionName, String componentName, IComponent component) {
         this.engine.exec(actionName, component).ifPresentOrElse(componentTaskResultFuture -> {
             try {
-                IComponentTaskResult componentTaskResult = componentTaskResultFuture.get();
+                ComponentTaskResult componentTaskResult = componentTaskResultFuture.get();
                 logger.info("Success to execute build task on component [{}].", componentName);
                 resultContainer.put(componentName, componentTaskResult);
             } catch (Exception e) {
