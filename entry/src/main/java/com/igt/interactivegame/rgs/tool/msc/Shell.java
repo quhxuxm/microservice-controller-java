@@ -24,16 +24,26 @@ public class Shell {
     }
 
     @ShellMethod("Fetch source code from Perforce.")
-    public Map<String, ComponentTaskResult> p4fetch(@ShellOption(defaultValue = ShellOption.NULL) String... componentNames) {
+    public Map<String, ComponentTaskResult> p4fetch(
+            @ShellOption(defaultValue = ShellOption.NULL)
+                    String... componentNames) {
         return this.execComponentTaskShell(IComponentAction.ActionName.P4_FETCH, componentNames);
     }
 
     @ShellMethod("Build the source code of a component")
-    public Map<String, ComponentTaskResult> build(@ShellOption(defaultValue = ShellOption.NULL) String... componentNames) {
+    public Map<String, ComponentTaskResult> build(
+            @ShellOption(defaultValue = ShellOption.NULL)
+                    String... componentNames) {
         return this.execComponentTaskShell(IComponentAction.ActionName.BUILD, componentNames);
     }
 
-    private Map<String, ComponentTaskResult> execComponentTaskShell(IComponentAction.ActionName actionName, String[] componentNames) {
+    @ShellMethod("Start the GUI")
+    public String gui() {
+        return "GUI started.";
+    }
+
+    private Map<String, ComponentTaskResult> execComponentTaskShell(IComponentAction.ActionName actionName,
+            String[] componentNames) {
         final Map<String, ComponentTaskResult> result = new HashMap<>();
         if (componentNames == null) {
             logger.info("No component identified, will [{}] all components.", actionName);
@@ -44,8 +54,7 @@ public class Shell {
             });
             return result;
         }
-        for (
-                String componentName : componentNames) {
+        for (String componentName : componentNames) {
             logger.info("Begin to execute the [{}] task on component [{}].", actionName, componentName);
             IComponent component = this.engine.getComponents().get(componentName);
             if (component == null) {
@@ -57,7 +66,8 @@ public class Shell {
         return result;
     }
 
-    private void invokeEngine(Map<String, ComponentTaskResult> resultContainer, IComponentAction.ActionName actionName, String componentName, IComponent component) {
+    private void invokeEngine(Map<String, ComponentTaskResult> resultContainer, IComponentAction.ActionName actionName,
+            String componentName, IComponent component) {
         this.engine.exec(actionName, component).ifPresentOrElse(componentTaskResultFuture -> {
             try {
                 ComponentTaskResult componentTaskResult = componentTaskResultFuture.get();
