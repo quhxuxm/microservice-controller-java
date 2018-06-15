@@ -5,11 +5,11 @@ import com.igt.interactivegame.rgs.tool.msc.api.IComponentAction;
 
 import java.util.Map;
 
-public class DefaultComponent implements IComponent {
+public class BasicComponent implements IComponent {
     private Map<IComponentAction.ActionName, IComponentAction> actions;
     private String name;
 
-    public DefaultComponent(String name, Map<IComponentAction.ActionName, IComponentAction> actions) {
+    public BasicComponent(String name, Map<IComponentAction.ActionName, IComponentAction> actions) {
         this.name = name;
         this.actions = actions;
     }

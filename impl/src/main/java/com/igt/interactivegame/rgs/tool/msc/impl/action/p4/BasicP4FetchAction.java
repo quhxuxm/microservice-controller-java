@@ -3,28 +3,26 @@ package com.igt.interactivegame.rgs.tool.msc.impl.action.p4;
 import com.igt.interactivegame.rgs.tool.msc.api.ComponentTaskResult;
 import com.igt.interactivegame.rgs.tool.msc.api.IComponent;
 import com.igt.interactivegame.rgs.tool.msc.api.IComponentAction;
-import com.igt.interactivegame.rgs.tool.msc.impl.action.p4.configuration.P4ClientConfigurationProperties;
+import com.igt.interactivegame.rgs.tool.msc.impl.action.p4.configuration.P4ConfigurationProperties;
 import com.perforce.p4java.client.IClient;
 import com.perforce.p4java.exception.AccessException;
 import com.perforce.p4java.exception.ConnectionException;
-import com.perforce.p4java.exception.P4JavaException;
 import com.perforce.p4java.option.client.SyncOptions;
 import com.perforce.p4java.server.IServer;
+import com.perforce.p4java.server.ServerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 
-public class DefaultP4FetchAction implements IComponentAction {
-    private static final Logger logger = LoggerFactory.getLogger(DefaultP4FetchAction.class);
-    private IServer p4Server;
+public class BasicP4FetchAction implements IComponentAction {
+    private static final Logger logger = LoggerFactory.getLogger(BasicP4FetchAction.class);
     private IComponent owner;
-    private P4ClientConfigurationProperties clientConfigurationProperties;
+    private P4ConfigurationProperties p4ConfigurationProperties;
 
-    public DefaultP4FetchAction(IComponent owner, IServer p4Server, P4ClientConfigurationProperties clientConfigurationProperties) {
+    public BasicP4FetchAction(IComponent owner, P4ConfigurationProperties p4ConfigurationProperties) {
         this.owner = owner;
-        this.p4Server = p4Server;
-        this.clientConfigurationProperties = clientConfigurationProperties;
+        this.p4ConfigurationProperties = p4ConfigurationProperties;
     }
 
     @Override
@@ -40,18 +38,27 @@ public class DefaultP4FetchAction implements IComponentAction {
     @Override
     public ComponentTaskResult exec() {
         long startTime = System.nanoTime();
+        IServer p4Server = null;
         try {
-            this.p4Server.connect();
-            IClient p4Client = this.p4Server.getClient(this.clientConfigurationProperties.getClientName());
+            p4Server = ServerFactory.getServer(this.p4ConfigurationProperties.getServerUrl(), null);
+            p4Server.setUserName(this.p4ConfigurationProperties.getUserName());
+            p4Server.connect();
+            p4Server.login(this.p4ConfigurationProperties.getPassword());
+            IClient p4Client = p4Server.getClient(this.p4ConfigurationProperties.getClientName());
+            p4Server.setCurrentClient(p4Client);
             p4Client.sync(Collections.emptyList(), new SyncOptions("-f"));
             logger.info(String.format("Success to sync p4 source code for component [%s].", this.getOwner().getName()));
-        } catch (P4JavaException e) {
-            logger.error("Fail to fetch p4 source code for component [{}] because of exception.", this.owner.getName(), e);
+        } catch (Exception e) {
+            logger.error("Fail to fetch p4 source code for component [{}] because of exception.", this.owner.getName(),
+                    e);
             long endTime = System.nanoTime();
-            return new ComponentTaskResult(ComponentTaskResult.Status.FAIL, this.owner, endTime - startTime, e.getMessage());
+            return new ComponentTaskResult(ComponentTaskResult.Status.FAIL, this.owner, endTime - startTime,
+                    e.getMessage());
         } finally {
             try {
-                this.p4Server.disconnect();
+                if (p4Server != null) {
+                    p4Server.disconnect();
+                }
             } catch (ConnectionException | AccessException e) {
                 logger.error("Fail to disconnect p4 because of exception.", e);
             }

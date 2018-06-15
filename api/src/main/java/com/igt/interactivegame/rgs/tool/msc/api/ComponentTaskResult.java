@@ -33,4 +33,11 @@ public class ComponentTaskResult {
     public String getMessage() {
         return message;
     }
+
+    @Override
+    public String toString() {
+        return String
+                .format("[Status = %s, Time take = %s, Message = %s]", this.status.name(), Long.toString(this.timeTake),
+                        this.getMessage());
+    }
 }
