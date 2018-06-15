@@ -39,6 +39,7 @@ public class Shell {
 
     @ShellMethod("Start the GUI")
     public String gui() {
+        GUI.INSTANCE.start();
         return "GUI started.";
     }
 
