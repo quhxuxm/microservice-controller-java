@@ -39,12 +39,13 @@ public class Shell {
 
     @ShellMethod("Start the GUI")
     public String gui() {
-        GUI.INSTANCE.start();
+        GUI gui = new GUI(this.engine);
+        gui.start();
         return "GUI started.";
     }
 
     private Map<String, ComponentTaskResult> execComponentTaskShell(IComponentAction.ActionName actionName,
-            String[] componentNames) {
+                                                                    String[] componentNames) {
         final Map<String, ComponentTaskResult> result = new HashMap<>();
         if (componentNames == null) {
             logger.info("No component identified, will [{}] all components.", actionName);
@@ -68,7 +69,7 @@ public class Shell {
     }
 
     private void invokeEngine(Map<String, ComponentTaskResult> resultContainer, IComponentAction.ActionName actionName,
-            String componentName, IComponent component) {
+                              String componentName, IComponent component) {
         this.engine.exec(actionName, component).ifPresentOrElse(componentTaskResultFuture -> {
             try {
                 ComponentTaskResult componentTaskResult = componentTaskResultFuture.get();
