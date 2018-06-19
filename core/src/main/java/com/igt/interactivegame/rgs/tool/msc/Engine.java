@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class Engine {
@@ -16,8 +17,8 @@ public class Engine {
     private ExecutorService executorService;
     private Map<String, IComponent> components;
 
-    public Engine(ExecutorService executorService, Map<String, IComponent> components) {
-        this.executorService = executorService;
+    public Engine(Map<String, IComponent> components, CoreConfiguration coreConfiguration) {
+        this.executorService = Executors.newFixedThreadPool(coreConfiguration.getEngineThreadPoolSize());
         this.components = components;
     }
 

@@ -5,18 +5,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Configuration
 public class Configure {
     @Bean
-    public Engine engine(ExecutorService executorService, Map<String, IComponent> components) {
-        return new Engine(executorService, components);
+    public CoreConfiguration coreConfiguration() {
+        return new CoreConfiguration();
     }
 
     @Bean
-    ExecutorService executorService() {
-        return Executors.newFixedThreadPool(10);
+    public Engine engine(Map<String, IComponent> components) {
+        return new Engine(components, this.coreConfiguration());
     }
 }

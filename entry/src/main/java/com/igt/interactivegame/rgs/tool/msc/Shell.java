@@ -37,6 +37,13 @@ public class Shell {
         return this.execComponentTaskShell(IComponentAction.ActionName.BUILD, componentNames);
     }
 
+    @ShellMethod("Deploy the source code of a component")
+    public Map<String, ComponentTaskResult> deploy(
+            @ShellOption(defaultValue = ShellOption.NULL)
+                    String... componentNames) {
+        return this.execComponentTaskShell(IComponentAction.ActionName.DEPLOY, componentNames);
+    }
+
     @ShellMethod("Start the GUI")
     public String gui() {
         GUI gui = new GUI(this.engine);
@@ -45,7 +52,7 @@ public class Shell {
     }
 
     private Map<String, ComponentTaskResult> execComponentTaskShell(IComponentAction.ActionName actionName,
-                                                                    String[] componentNames) {
+            String[] componentNames) {
         final Map<String, ComponentTaskResult> result = new HashMap<>();
         if (componentNames == null) {
             logger.info("No component identified, will [{}] all components.", actionName);
@@ -69,7 +76,7 @@ public class Shell {
     }
 
     private void invokeEngine(Map<String, ComponentTaskResult> resultContainer, IComponentAction.ActionName actionName,
-                              String componentName, IComponent component) {
+            String componentName, IComponent component) {
         this.engine.exec(actionName, component).ifPresentOrElse(componentTaskResultFuture -> {
             try {
                 ComponentTaskResult componentTaskResult = componentTaskResultFuture.get();

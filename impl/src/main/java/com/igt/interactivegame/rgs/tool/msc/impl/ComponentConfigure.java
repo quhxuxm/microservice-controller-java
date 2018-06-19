@@ -4,6 +4,8 @@ import com.igt.interactivegame.rgs.tool.msc.api.IComponent;
 import com.igt.interactivegame.rgs.tool.msc.api.IComponentAction;
 import com.igt.interactivegame.rgs.tool.msc.impl.action.build.BasicBuildAction;
 import com.igt.interactivegame.rgs.tool.msc.impl.action.build.configuration.BasicBuildConfigurationProperties;
+import com.igt.interactivegame.rgs.tool.msc.impl.action.deploy.BasicDeployAction;
+import com.igt.interactivegame.rgs.tool.msc.impl.action.deploy.configuration.BasicDeployConfigurationProperties;
 import com.igt.interactivegame.rgs.tool.msc.impl.action.p4.BasicP4FetchAction;
 import com.igt.interactivegame.rgs.tool.msc.impl.action.p4.configuration.P4ConfigurationProperties;
 import com.igt.interactivegame.rgs.tool.msc.impl.component.BasicComponent;
@@ -35,6 +37,8 @@ public class ComponentConfigure {
                 this.createP4FetchAction(result, this.gsrP4ConfigurationProperties()));
         actions.put(IComponentAction.ActionName.BUILD,
                 this.createBuildAction(result, this.rgsBuildConfigurationProperties()));
+        actions.put(IComponentAction.ActionName.DEPLOY,
+                this.createDeployAction(result, this.gsrDeployConfigurationProperties()));
         return result;
     }
 
@@ -72,61 +76,67 @@ public class ComponentConfigure {
     }
 
     @Bean
-    @ConfigurationProperties(prefix = "rgs.p4")
+    @ConfigurationProperties(prefix = "component.rgs.p4")
     P4ConfigurationProperties rgsP4ConfigurationProperties() {
         return new P4ConfigurationProperties();
     }
 
     @Bean
-    @ConfigurationProperties(prefix = "nss.p4")
+    @ConfigurationProperties(prefix = "component.nss.p4")
     P4ConfigurationProperties nssP4ConfigurationProperties() {
         return new P4ConfigurationProperties();
     }
 
     @Bean
-    @ConfigurationProperties(prefix = "gsr.p4")
+    @ConfigurationProperties(prefix = "component.gsr.p4")
     P4ConfigurationProperties gsrP4ConfigurationProperties() {
         return new P4ConfigurationProperties();
     }
 
     @Bean
-    @ConfigurationProperties(prefix = "cache.p4")
+    @ConfigurationProperties(prefix = "component.cache.p4")
     P4ConfigurationProperties cacheP4ConfigurationProperties() {
         return new P4ConfigurationProperties();
     }
 
     @Bean
-    @ConfigurationProperties(prefix = "common.p4")
+    @ConfigurationProperties(prefix = "component.common.p4")
     P4ConfigurationProperties commonP4ConfigurationProperties() {
         return new P4ConfigurationProperties();
     }
 
     @Bean
-    @ConfigurationProperties(prefix = "gsr.build")
+    @ConfigurationProperties(prefix = "component.gsr.build")
     BasicBuildConfigurationProperties gsrBuildConfigurationProperties() {
         return new BasicBuildConfigurationProperties();
     }
 
     @Bean
-    @ConfigurationProperties(prefix = "rgs.build")
+    @ConfigurationProperties(prefix = "component.gsr.deploy")
+    BasicDeployConfigurationProperties gsrDeployConfigurationProperties() {
+        return new BasicDeployConfigurationProperties();
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "component.rgs.build")
     BasicBuildConfigurationProperties rgsBuildConfigurationProperties() {
         return new BasicBuildConfigurationProperties();
     }
 
     @Bean
-    @ConfigurationProperties(prefix = "nss.build")
+    @ConfigurationProperties(prefix = "component.nss.build")
     BasicBuildConfigurationProperties nssBuildConfigurationProperties() {
         return new BasicBuildConfigurationProperties();
     }
 
     @Bean
-    @ConfigurationProperties(prefix = "cache.build")
+    @ConfigurationProperties(prefix = "component.cache.build")
     BasicBuildConfigurationProperties cacheBuildConfigurationProperties() {
         return new BasicBuildConfigurationProperties();
     }
 
     @Bean
-    @ConfigurationProperties(prefix = "common.build")
+    @ConfigurationProperties(prefix = "component.common.build")
     BasicBuildConfigurationProperties commonBuildConfigurationProperties() {
         return new BasicBuildConfigurationProperties();
     }
@@ -139,5 +149,10 @@ public class ComponentConfigure {
     private BasicBuildAction createBuildAction(IComponent component,
             BasicBuildConfigurationProperties basicBuildConfigurationProperties) {
         return new BasicBuildAction(component, basicBuildConfigurationProperties);
+    }
+
+    private BasicDeployAction createDeployAction(IComponent component,
+            BasicDeployConfigurationProperties basicDeployConfigurationProperties) {
+        return new BasicDeployAction(component, basicDeployConfigurationProperties);
     }
 }
