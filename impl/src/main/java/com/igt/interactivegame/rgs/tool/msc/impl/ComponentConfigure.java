@@ -76,8 +76,66 @@ public class ComponentConfigure {
     }
 
     @Bean
+    IComponent ipl() {
+        Map<IComponentAction.ActionName, IComponentAction> actions = new HashMap<>();
+        IComponent result = new BasicComponent("IPL Component", actions);
+        actions.put(IComponentAction.ActionName.P4_FETCH,
+                this.createP4FetchAction(result, this.iplP4ConfigurationProperties()));
+        actions.put(IComponentAction.ActionName.BUILD,
+                this.createBuildAction(result, this.iplBuildConfigurationProperties()));
+        return result;
+    }
+
+    @Bean
+    IComponent rgsenv() {
+        Map<IComponentAction.ActionName, IComponentAction> actions = new HashMap<>();
+        IComponent result = new BasicComponent("RGS Env Component", actions);
+        actions.put(IComponentAction.ActionName.P4_FETCH,
+                this.createP4FetchAction(result, this.rgsenvP4ConfigurationProperties()));
+        actions.put(IComponentAction.ActionName.BUILD,
+                this.createBuildAction(result, this.rgsenvBuildConfigurationProperties()));
+        return result;
+    }
+
+    @Bean
+    IComponent iplenv() {
+        Map<IComponentAction.ActionName, IComponentAction> actions = new HashMap<>();
+        IComponent result = new BasicComponent("IPL Env Component", actions);
+        actions.put(IComponentAction.ActionName.P4_FETCH,
+                this.createP4FetchAction(result, this.iplenvP4ConfigurationProperties()));
+        actions.put(IComponentAction.ActionName.BUILD,
+                this.createBuildAction(result, this.iplenvBuildConfigurationProperties()));
+        return result;
+    }
+
+    @Bean
     @ConfigurationProperties(prefix = "component.rgs.p4")
     P4ConfigurationProperties rgsP4ConfigurationProperties() {
+        return new P4ConfigurationProperties();
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "component.rgsenv.p4")
+    P4ConfigurationProperties rgsenvP4ConfigurationProperties() {
+        return new P4ConfigurationProperties();
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "component.iplenv.p4")
+    P4ConfigurationProperties iplenvP4ConfigurationProperties() {
+        return new P4ConfigurationProperties();
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "component.gsrenv.p4")
+    P4ConfigurationProperties gsrenvP4ConfigurationProperties() {
+        return new P4ConfigurationProperties();
+    }
+
+
+    @Bean
+    @ConfigurationProperties(prefix = "component.ipl.p4")
+    P4ConfigurationProperties iplP4ConfigurationProperties() {
         return new P4ConfigurationProperties();
     }
 
@@ -108,6 +166,24 @@ public class ComponentConfigure {
     @Bean
     @ConfigurationProperties(prefix = "component.gsr.build")
     BasicBuildConfigurationProperties gsrBuildConfigurationProperties() {
+        return new BasicBuildConfigurationProperties();
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "component.ipl.build")
+    BasicBuildConfigurationProperties iplBuildConfigurationProperties() {
+        return new BasicBuildConfigurationProperties();
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "component.rgsenv.build")
+    BasicBuildConfigurationProperties rgsenvBuildConfigurationProperties() {
+        return new BasicBuildConfigurationProperties();
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "component.iplenv.build")
+    BasicBuildConfigurationProperties iplenvBuildConfigurationProperties() {
         return new BasicBuildConfigurationProperties();
     }
 
