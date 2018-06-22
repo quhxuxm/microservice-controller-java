@@ -7,17 +7,13 @@ import com.igt.interactivegame.rgs.tool.msc.impl.action.p4.configuration.P4Confi
 import com.perforce.p4java.client.IClient;
 import com.perforce.p4java.exception.AccessException;
 import com.perforce.p4java.exception.ConnectionException;
-import com.perforce.p4java.impl.mapbased.rpc.CommandEnv;
-import com.perforce.p4java.option.client.ParallelSyncOptions;
 import com.perforce.p4java.option.client.SyncOptions;
 import com.perforce.p4java.server.IServer;
 import com.perforce.p4java.server.ServerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 
 public class BasicP4FetchAction implements IComponentAction {
     private static final Logger logger = LoggerFactory.getLogger(BasicP4FetchAction.class);
@@ -50,11 +46,7 @@ public class BasicP4FetchAction implements IComponentAction {
             p4Server.login(this.p4ConfigurationProperties.getPassword());
             IClient p4Client = p4Server.getClient(this.p4ConfigurationProperties.getClientName());
             p4Server.setCurrentClient(p4Client);
-            ParallelSyncOptions parallelSyncOptions=new ParallelSyncOptions();
-            parallelSyncOptions.setCallback((CommandEnv cmdEnv, int threads, HashMap<String, String> flags, ArrayList<String> args)->{
-                return Boolean.TRUE;
-            });
-            p4Client.syncParallel(Collections.emptyList(), new SyncOptions("-f"), parallelSyncOptions);
+            p4Client.sync(Collections.emptyList(), new SyncOptions("-f"));
             logger.info(String.format("Success to sync p4 source code for component [%s].", this.getOwner().getName()));
         } catch (Exception e) {
             logger.error("Fail to fetch p4 source code for component [{}] because of exception.", this.owner.getName(),
