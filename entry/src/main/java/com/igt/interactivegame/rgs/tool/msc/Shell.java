@@ -37,11 +37,25 @@ public class Shell {
         return this.execComponentTaskShell(IComponentAction.ActionName.BUILD, componentNames);
     }
 
+    @ShellMethod("Deploy the apache of a component")
+    public Map<String, ComponentTaskResult> deployApache(
+            @ShellOption(defaultValue = ShellOption.NULL)
+                    String... componentNames) {
+        return this.execComponentTaskShell(IComponentAction.ActionName.DEPLOY_APACHE, componentNames);
+    }
+
+    @ShellMethod("Deploy the tomcat of a component")
+    public Map<String, ComponentTaskResult> deployTomcat(
+            @ShellOption(defaultValue = ShellOption.NULL)
+                    String... componentNames) {
+        return this.execComponentTaskShell(IComponentAction.ActionName.DEPLOY_TOMCAT, componentNames);
+    }
+
     @ShellMethod("Deploy the source code of a component")
     public Map<String, ComponentTaskResult> deploy(
             @ShellOption(defaultValue = ShellOption.NULL)
                     String... componentNames) {
-        return this.execComponentTaskShell(IComponentAction.ActionName.DEPLOY, componentNames);
+        return this.execComponentTaskShell(IComponentAction.ActionName.DEPLOY_COMPONENT, componentNames);
     }
 
     @ShellMethod("Start the GUI")
@@ -67,8 +81,9 @@ public class Shell {
             logger.info("Begin to execute the [{}] task on component [{}].", actionName, componentName);
             IComponent component = this.engine.getComponents().get(componentName);
             if (component == null) {
-                logger.error("Can not [{}] component [{}] because of not exist.", actionName, componentName);
-                continue;
+                logger.warn("Can not [{}] component [{}] because of not exist will use default one.", actionName,
+                        componentName);
+                component = this.engine.getComponents().get("__default__");
             }
             invokeEngine(result, actionName, componentName, component);
         }

@@ -4,7 +4,8 @@ import com.igt.interactivegame.rgs.tool.msc.api.IComponent;
 import com.igt.interactivegame.rgs.tool.msc.api.IComponentAction;
 import com.igt.interactivegame.rgs.tool.msc.impl.action.build.BasicBuildAction;
 import com.igt.interactivegame.rgs.tool.msc.impl.action.build.configuration.BasicBuildConfigurationProperties;
-import com.igt.interactivegame.rgs.tool.msc.impl.action.deploy.BasicDeployAction;
+import com.igt.interactivegame.rgs.tool.msc.impl.action.deploy.BasicDeployApacheAction;
+import com.igt.interactivegame.rgs.tool.msc.impl.action.deploy.BasicDeployTomcatAction;
 import com.igt.interactivegame.rgs.tool.msc.impl.action.deploy.configuration.BasicDeployConfigurationProperties;
 import com.igt.interactivegame.rgs.tool.msc.impl.action.p4.BasicP4FetchAction;
 import com.igt.interactivegame.rgs.tool.msc.impl.action.p4.configuration.P4ConfigurationProperties;
@@ -18,6 +19,21 @@ import java.util.Map;
 
 @Configuration
 public class ComponentConfigure {
+    @Bean
+    IComponent __default__() {
+        Map<IComponentAction.ActionName, IComponentAction> actions = new HashMap<>();
+        IComponent result = new BasicComponent("Default Component", actions);
+        actions.put(IComponentAction.ActionName.P4_FETCH,
+                this.createP4FetchAction(result, this.gsrP4ConfigurationProperties()));
+        actions.put(IComponentAction.ActionName.BUILD,
+                this.createBuildAction(result, this.rgsBuildConfigurationProperties()));
+        actions.put(IComponentAction.ActionName.DEPLOY_APACHE,
+                this.createDeployApacheAction(result, this.gsrDeployConfigurationProperties()));
+        actions.put(IComponentAction.ActionName.DEPLOY_TOMCAT,
+                this.createDeployTomcatAction(result, this.gsrDeployConfigurationProperties()));
+        return result;
+    }
+
     @Bean
     IComponent rgs() {
         Map<IComponentAction.ActionName, IComponentAction> actions = new HashMap<>();
@@ -37,8 +53,10 @@ public class ComponentConfigure {
                 this.createP4FetchAction(result, this.gsrP4ConfigurationProperties()));
         actions.put(IComponentAction.ActionName.BUILD,
                 this.createBuildAction(result, this.rgsBuildConfigurationProperties()));
-        actions.put(IComponentAction.ActionName.DEPLOY,
-                this.createDeployAction(result, this.gsrDeployConfigurationProperties()));
+        actions.put(IComponentAction.ActionName.DEPLOY_APACHE,
+                this.createDeployApacheAction(result, this.gsrDeployConfigurationProperties()));
+        actions.put(IComponentAction.ActionName.DEPLOY_TOMCAT,
+                this.createDeployTomcatAction(result, this.gsrDeployConfigurationProperties()));
         return result;
     }
 
@@ -109,6 +127,12 @@ public class ComponentConfigure {
     }
 
     @Bean
+    @ConfigurationProperties(prefix = "component.${name}.p4")
+    P4ConfigurationProperties defaultP4ConfigurationProperties() {
+        return new P4ConfigurationProperties();
+    }
+
+    @Bean
     @ConfigurationProperties(prefix = "component.rgs.p4")
     P4ConfigurationProperties rgsP4ConfigurationProperties() {
         return new P4ConfigurationProperties();
@@ -131,7 +155,6 @@ public class ComponentConfigure {
     P4ConfigurationProperties gsrenvP4ConfigurationProperties() {
         return new P4ConfigurationProperties();
     }
-
 
     @Bean
     @ConfigurationProperties(prefix = "component.ipl.p4")
@@ -227,8 +250,13 @@ public class ComponentConfigure {
         return new BasicBuildAction(component, basicBuildConfigurationProperties);
     }
 
-    private BasicDeployAction createDeployAction(IComponent component,
+    private BasicDeployApacheAction createDeployApacheAction(IComponent component,
             BasicDeployConfigurationProperties basicDeployConfigurationProperties) {
-        return new BasicDeployAction(component, basicDeployConfigurationProperties);
+        return new BasicDeployApacheAction(component, basicDeployConfigurationProperties);
+    }
+
+    private BasicDeployTomcatAction createDeployTomcatAction(IComponent component,
+            BasicDeployConfigurationProperties basicDeployConfigurationProperties) {
+        return new BasicDeployTomcatAction(component, basicDeployConfigurationProperties);
     }
 }
